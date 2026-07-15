@@ -68,12 +68,20 @@ export default function RegisterPage() {
       await refetchUser();
       router.push('/dashboard');
     } catch (err: any) {
+      // Network error — backend not reachable
+      if (!err.response) {
+        setError('Cannot connect to server. Make sure the backend is running.');
+        return;
+      }
       const detail = err.response?.data?.detail;
+      const status = err.response?.status;
       if (Array.isArray(detail)) {
-        // Pydantic validation errors come as an array
         setError(detail.map((d: any) => d.msg).join(', '));
+      } else if (typeof detail === 'string') {
+        setError(detail);
       } else {
-        setError(detail || 'Registration failed. Please try again.');
+        // Show full raw error so we can debug
+        setError(`Error ${status}: ${JSON.stringify(err.response?.data)}`);
       }
     } finally {
       setLoading(false);
