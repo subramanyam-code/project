@@ -18,8 +18,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch the logged-in user profile using the stored access token
   const fetchUser = useCallback(async () => {
-    if (!getAccessToken()) { setLoading(false); return; }
+    if (!getAccessToken()) {
+      setLoading(false);
+      return;
+    }
     try {
       const me = await authService.getMe();
       setUser(me);
@@ -31,18 +35,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => { fetchUser(); }, [fetchUser]);
+  // On mount — restore session if token exists in cookies
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
+  // Login: call API → store tokens → fetch user profile
   const login = async (email: string, password: string) => {
     const token = await authService.login(email, password);
     setTokens(token.access_token, token.refresh_token);
     await fetchUser();
   };
 
+  // Logout: call API → clear tokens → clear user state
   const logout = async () => {
-    await authService.logout();
-    clearTokens();
-    setUser(null);
+    try {
+      await authService.logout();
+    } catch {
+      // Ignore logout API errors — clear locally regardless
+    } finally {
+      clearTokens();
+      setUser(null);
+    }
   };
 
   return (

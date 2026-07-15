@@ -3,8 +3,13 @@ import Cookies from "js-cookie";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+// On Netlify, NEXT_PUBLIC_API_URL is empty — use relative /api/v1
+// so the Netlify proxy in netlify.toml forwards to the Render backend.
+// Locally, axios calls http://localhost:8000/api/v1 directly.
+const baseURL = BASE ? `${BASE}/api/v1` : "/api/v1";
+
 export const api = axios.create({
-  baseURL: `${BASE}/api/v1`,
+  baseURL,
   headers: { "Content-Type": "application/json" },
   timeout: 30_000,
 });
@@ -29,9 +34,10 @@ api.interceptors.response.use(
       }
       refreshing = true;
       const refresh = Cookies.get("refresh_token");
-      if (!refresh) { clearTokens(); if (typeof window !== "undefined") window.location.href = "/login"; return Promise.reject(error); }
+      if (!refresh) { clearTokens(); if (typeof window !== "undefined") window.location.href = "/auth/login"; return Promise.reject(error); }
       try {
-        const { data } = await axios.post(`${BASE}/api/v1/auth/refresh`, { refresh_token: refresh });
+        const refreshURL = BASE ? `${BASE}/api/v1/auth/refresh` : "/api/v1/auth/refresh";
+        const { data } = await axios.post(refreshURL, { refresh_token: refresh });
         setTokens(data.access_token, data.refresh_token);
         waitQueue.forEach((cb) => cb(data.access_token));
         waitQueue = [];
@@ -39,7 +45,7 @@ api.interceptors.response.use(
         return api(orig);
       } catch {
         clearTokens();
-        if (typeof window !== "undefined") window.location.href = "/login";
+        if (typeof window !== "undefined") window.location.href = "/auth/login";
         return Promise.reject(error);
       } finally { refreshing = false; }
     }

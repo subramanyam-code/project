@@ -1,0 +1,6 @@
+# Netlify _redirects
+# @netlify/plugin-nextjs handles all SSR/App Router routing automatically.
+# This only proxies /api/* to the Render backend as a fallback
+# (netlify.toml redirects take priority, this is a safety net).
+
+/api/*  https://tspm-backend.onrender.com/api/:splat  200

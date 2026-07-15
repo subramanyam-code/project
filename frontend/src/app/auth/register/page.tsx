@@ -11,7 +11,7 @@ import { Card } from '@/components/common/Card';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { refetchUser } = useAuth();
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -55,16 +55,17 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      // Register — backend returns tokens directly
+      // Register returns tokens directly — store them and fetch the user
       const tokens = await authService.register(
         formData.first_name.trim(),
         formData.last_name.trim(),
-        formData.email,
+        formData.email.toLowerCase(),
         formData.password,
       );
-
-      // Store tokens and load the user (reuse login flow)
-      await login(formData.email, formData.password);
+      // Store tokens then load the user profile into context
+      const { setTokens } = await import('@/lib/axios');
+      setTokens(tokens.access_token, tokens.refresh_token);
+      await refetchUser();
       router.push('/dashboard');
     } catch (err: any) {
       const detail = err.response?.data?.detail;

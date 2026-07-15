@@ -1,0 +1,77 @@
+# ─────────────────────────────────────────────────────────────
+#  Render.com Blueprint — TSPM Backend (FastAPI) + PostgreSQL
+#  Docs: https://render.com/docs/blueprint-spec
+# ─────────────────────────────────────────────────────────────
+
+services:
+  # ── FastAPI Backend ──────────────────────────────────────────
+  - type: web
+    name: tspm-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: free                          # change to starter/standard for production
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tspm-db
+          property: connectionString
+      - key: REDIS_URL
+        value: redis://localhost:6379/0  # replace with Render Redis URL if needed
+      - key: SECRET_KEY
+        generateValue: true             # Render auto-generates a secure random value
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        value: https://your-site.netlify.app   # ← replace with your Netlify URL after deploy
+      - key: BACKEND_CORS_ORIGINS
+        value: https://your-site.netlify.app   # ← same as above
+      - key: AWS_ACCESS_KEY_ID
+        sync: false                     # set manually in Render dashboard
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+
+  # ── Run Alembic migrations before each deploy ───────────────
+  - type: worker
+    name: tspm-migrate
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon
+    plan: free
+    startCommand: alembic upgrade head
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tspm-db
+          property: connectionString
+
+# ── Managed PostgreSQL on Render ─────────────────────────────
+databases:
+  - name: tspm-db
+    databaseName: hidb
+    user: mydata
+    region: oregon
+    plan: free                          # free tier: 1GB, 90-day retention

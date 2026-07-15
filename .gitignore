@@ -14,3 +14,8 @@ node_modules/
 dist/
 build/
 nginx/ssl/
+
+# Local database data directories
+database/postgres_data/
+database/redis_data/
+database/pgadmin_data/
