@@ -24,9 +24,18 @@ def create_application() -> FastAPI:
         redoc_url=f"{settings.API_V1_STR}/redoc",
     )
 
-    app.add_middleware(CORSMiddleware, allow_origins=settings.get_cors_origins(),
-                       allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+    # IMPORTANT: middleware order matters — last added runs first
+    # LoggingMiddleware must be added BEFORE CORSMiddleware so CORS runs first
     app.add_middleware(LoggingMiddleware)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.get_cors_origins(),
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+        expose_headers=["*"],
+        max_age=600,
+    )
 
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
