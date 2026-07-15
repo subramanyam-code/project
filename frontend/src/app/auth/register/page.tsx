@@ -55,22 +55,19 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      // Register returns tokens directly — store them and fetch the user
       const tokens = await authService.register(
         formData.first_name.trim(),
         formData.last_name.trim(),
         formData.email.toLowerCase(),
         formData.password,
       );
-      // Store tokens then load the user profile into context
       const { setTokens } = await import('@/lib/axios');
       setTokens(tokens.access_token, tokens.refresh_token);
       await refetchUser();
       router.push('/dashboard');
     } catch (err: any) {
-      // Network error — backend not reachable
       if (!err.response) {
-        setError('Server is starting up, please wait 30 seconds and try again.');
+        setError('Server took too long to respond. Please try again — it may take up to 60 seconds on first load.');
         return;
       }
       const detail = err.response?.data?.detail;
@@ -80,7 +77,6 @@ export default function RegisterPage() {
       } else if (typeof detail === 'string') {
         setError(detail);
       } else {
-        // Show full raw error so we can debug
         setError(`Error ${status}: ${JSON.stringify(err.response?.data)}`);
       }
     } finally {
@@ -177,7 +173,7 @@ export default function RegisterPage() {
               loading={loading}
               className="mt-2"
             >
-              Create Account
+              {loading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
 

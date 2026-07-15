@@ -2,16 +2,12 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
-// On Netlify, NEXT_PUBLIC_API_URL is empty — use relative /api/v1
-// so the Netlify proxy in netlify.toml forwards to the Render backend.
-// Locally, axios calls http://localhost:8000/api/v1 directly.
 const baseURL = BASE ? `${BASE}/api/v1` : "/api/v1";
 
 export const api = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },
-  timeout: 60_000, // 60s — accounts for Render free tier cold start (~30s)
+  timeout: 120_000, // 120s — Render free tier can take up to 60s to cold start
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -30,11 +26,20 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !orig._retry) {
       orig._retry = true;
       if (refreshing) {
-        return new Promise((res) => waitQueue.push((t) => { orig.headers.Authorization = `Bearer ${t}`; res(api(orig)); }));
+        return new Promise((res) =>
+          waitQueue.push((t) => {
+            orig.headers.Authorization = `Bearer ${t}`;
+            res(api(orig));
+          })
+        );
       }
       refreshing = true;
       const refresh = Cookies.get("refresh_token");
-      if (!refresh) { clearTokens(); if (typeof window !== "undefined") window.location.href = "/auth/login"; return Promise.reject(error); }
+      if (!refresh) {
+        clearTokens();
+        if (typeof window !== "undefined") window.location.href = "/auth/login";
+        return Promise.reject(error);
+      }
       try {
         const refreshURL = BASE ? `${BASE}/api/v1/auth/refresh` : "/api/v1/auth/refresh";
         const { data } = await axios.post(refreshURL, { refresh_token: refresh });
@@ -47,7 +52,9 @@ api.interceptors.response.use(
         clearTokens();
         if (typeof window !== "undefined") window.location.href = "/auth/login";
         return Promise.reject(error);
-      } finally { refreshing = false; }
+      } finally {
+        refreshing = false;
+      }
     }
     return Promise.reject(error);
   }
@@ -57,5 +64,8 @@ export const setTokens = (access: string, refresh: string) => {
   Cookies.set("access_token", access, { expires: 1 / 48, sameSite: "strict" });
   Cookies.set("refresh_token", refresh, { expires: 7, sameSite: "strict" });
 };
-export const clearTokens = () => { Cookies.remove("access_token"); Cookies.remove("refresh_token"); };
+export const clearTokens = () => {
+  Cookies.remove("access_token");
+  Cookies.remove("refresh_token");
+};
 export const getAccessToken = () => Cookies.get("access_token");
