@@ -9,6 +9,8 @@ import type {
 type P = Record<string, unknown>;
 
 export const authService = {
+  register: (first_name: string, last_name: string, email: string, password: string) =>
+    api.post<Token>("/auth/register", { first_name, last_name, email, password }).then(r => r.data),
   login: (email: string, password: string) =>
     api.post<Token>("/auth/login", { email, password }).then(r => r.data),
   logout: () => api.post("/auth/logout").catch(() => {}),
