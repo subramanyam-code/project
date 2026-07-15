@@ -10,7 +10,7 @@ from app.repositories.user_repository import UserRepository
 from app.repositories.audit_log_repository import AuditLogRepository
 from app.auth.password import hash_password, verify_password
 from app.auth.jwt import create_access_token, create_refresh_token, decode_token, create_password_reset_token, verify_password_reset_token
-from app.schemas.auth import Token, LoginRequest
+from app.schemas.auth import Token, LoginRequest, RegisterRequest
 from app.core.config import settings
 
 
@@ -19,6 +19,39 @@ class AuthService:
         self.db = db
         self.user_repo = UserRepository(db)
         self.audit = AuditLogRepository(db)
+
+    def register(self, data: RegisterRequest) -> Token:
+        # Check duplicate email
+        if self.user_repo.get_by_email(data.email):
+            raise HTTPException(status_code=409, detail="An account with this email already exists")
+
+        # Get the default 'employee' role
+        from sqlalchemy import select
+        from app.models.role import Role
+        role = self.db.execute(
+            select(Role).where(Role.role_name == "employee")
+        ).scalar_one_or_none()
+        if not role:
+            raise HTTPException(status_code=500, detail="Default role not configured. Contact admin.")
+
+        # Create the user
+        user = self.user_repo.create({
+            "first_name": data.first_name.strip(),
+            "last_name": data.last_name.strip(),
+            "email": data.email.lower(),
+            "hashed_password": hash_password(data.password),
+            "role_id": role.id,
+            "is_active": True,
+            "is_verified": False,
+        })
+        self.db.commit()
+        self.db.refresh(user)
+        self.audit.log(user.id, "REGISTER", "User", str(user.id), new_values={"email": user.email})
+
+        return Token(
+            access_token=create_access_token(user.id),
+            refresh_token=create_refresh_token(user.id),
+        )
 
     def login(self, credentials: LoginRequest, ip: str = None, ua: str = None) -> Token:
         user = self.user_repo.get_by_email(credentials.email)

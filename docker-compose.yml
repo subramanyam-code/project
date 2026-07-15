@@ -6,16 +6,16 @@ services:
     container_name: tspm_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-tspm_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tspm_password}
-      POSTGRES_DB: ${POSTGRES_DB:-tspm_db}
+      POSTGRES_USER: ${POSTGRES_USER:-mydata}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mypassword}
+      POSTGRES_DB: ${POSTGRES_DB:-hidb}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tspm_user} -d ${POSTGRES_DB:-tspm_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mydata} -d ${POSTGRES_DB:-hidb}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -45,7 +45,7 @@ services:
     container_name: tspm_backend
     restart: unless-stopped
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-tspm_user}:${POSTGRES_PASSWORD:-tspm_password}@db:5432/${POSTGRES_DB:-tspm_db}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-mydata}:${POSTGRES_PASSWORD:-mypassword}@db:5432/${POSTGRES_DB:-hidb}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-super-secret-key-change-in-production}
       - ALGORITHM=${ALGORITHM:-HS256}

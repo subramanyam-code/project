@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.database.session import get_db
-from app.schemas.auth import LoginRequest, Token, RefreshTokenRequest, ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest
+from app.schemas.auth import LoginRequest, Token, RefreshTokenRequest, ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest, RegisterRequest
 from app.schemas.common import MessageResponse
 from app.schemas.user import UserResponse
 from app.services.auth_service import AuthService
@@ -10,6 +10,15 @@ from app.auth.dependencies import get_current_active_user
 from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+@router.post("/register", response_model=Token, status_code=201)
+def register(data: RegisterRequest, db: Session = Depends(get_db)):
+    """
+    Public self-registration. Creates an account with the default 'employee' role.
+    Returns tokens so the user is logged in immediately after registering.
+    """
+    return AuthService(db).register(data)
 
 
 @router.post("/login", response_model=Token)
