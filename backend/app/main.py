@@ -24,18 +24,18 @@ def create_application() -> FastAPI:
         redoc_url=f"{settings.API_V1_STR}/redoc",
     )
 
-    # IMPORTANT: middleware order matters — last added runs first
-    # LoggingMiddleware must be added BEFORE CORSMiddleware so CORS runs first
-    app.add_middleware(LoggingMiddleware)
+    # CORS — must be first middleware to handle OPTIONS preflight correctly
+    cors_origins = settings.get_cors_origins()
+    logger.info(f"CORS origins: {cors_origins}")
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.get_cors_origins(),
+        allow_origins=cors_origins,
+        allow_origin_regex=r"https://.*\.netlify\.app",
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=["*"],
-        max_age=600,
     )
+    app.add_middleware(LoggingMiddleware)
 
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
