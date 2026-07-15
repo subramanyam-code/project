@@ -11,7 +11,7 @@ const baseURL = BASE ? `${BASE}/api/v1` : "/api/v1";
 export const api = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },
-  timeout: 30_000,
+  timeout: 60_000, // 60s — accounts for Render free tier cold start (~30s)
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {

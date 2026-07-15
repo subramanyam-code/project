@@ -70,7 +70,7 @@ export default function RegisterPage() {
     } catch (err: any) {
       // Network error — backend not reachable
       if (!err.response) {
-        setError('Cannot connect to server. Make sure the backend is running.');
+        setError('Server is starting up, please wait 30 seconds and try again.');
         return;
       }
       const detail = err.response?.data?.detail;

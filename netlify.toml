@@ -10,9 +10,7 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
-  # On Netlify, frontend calls go through the /api/* proxy below (no direct backend URL needed)
-  # Set your actual Render backend URL here after deploying the backend
-  NEXT_PUBLIC_API_URL = ""
+  NEXT_PUBLIC_API_URL = "https://project-1-7kvm.onrender.com"
   NEXT_PUBLIC_APP_NAME = "TeamStatus"
 
 # Next.js App Router — Netlify handles SSR via the plugin automatically
