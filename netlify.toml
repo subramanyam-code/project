@@ -46,7 +46,7 @@
 # Replace the `to` URL with your actual Render backend URL after deploy
 [[redirects]]
   from   = "/api/*"
-  to     = "https://tspm-backend.onrender.com/api/:splat"
+  to     = "https://project-1-7kvm.onrender.com/api/:splat"
   status = 200
   force  = true
 

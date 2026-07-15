@@ -3,4 +3,4 @@
 # This only proxies /api/* to the Render backend as a fallback
 # (netlify.toml redirects take priority, this is a safety net).
 
-/api/*  https://tspm-backend.onrender.com/api/:splat  200
+/api/*  https://project-1-7kvm.onrender.com/api/:splat  200
