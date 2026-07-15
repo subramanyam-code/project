@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings
 from pydantic import field_validator
 from typing import List, Optional, Union
 import secrets
+import json
 
 
 class Settings(BaseSettings):
@@ -23,14 +24,33 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    # Stored as a plain string internally — parsed in the validator below.
+    # In Render, set as: https://your-site.netlify.app,http://localhost:3000
+    BACKEND_CORS_ORIGINS: str = "http://localhost:3000,http://localhost:8000"
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        return v if isinstance(v, list) else [v]
+    def parse_cors_origins(cls, v: Union[str, List[str]]) -> str:
+        """
+        Accepts any format and normalises to a comma-separated string.
+        Actual splitting into a list is done in get_cors_origins().
+        """
+        if isinstance(v, list):
+            return ",".join(v)
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                try:
+                    parsed = json.loads(v)
+                    return ",".join(i.strip() for i in parsed)
+                except json.JSONDecodeError:
+                    pass
+            return v
+        return str(v)
+
+    def get_cors_origins(self) -> List[str]:
+        """Return CORS origins as a list — use this in main.py."""
+        return [o.strip() for o in self.BACKEND_CORS_ORIGINS.split(",") if o.strip()]
 
     AWS_ACCESS_KEY_ID: Optional[str] = None
     AWS_SECRET_ACCESS_KEY: Optional[str] = None
