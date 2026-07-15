@@ -13,9 +13,11 @@ COPY . .
 RUN adduser --disabled-password --gecos "" appuser && \
     chown -R appuser:appuser /app
 
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 USER appuser
 
 EXPOSE 8000
 
-# Production: no --reload
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/start.sh"]

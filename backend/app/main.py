@@ -38,6 +38,23 @@ def create_application() -> FastAPI:
     async def startup():
         logger.info(f"🚀 {settings.APP_NAME} v{settings.APP_VERSION} | {settings.ENVIRONMENT}")
         logger.info(f"   Docs: {settings.API_V1_STR}/docs")
+
+        # Auto-run migrations on startup (safe — alembic checks current state)
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["alembic", "upgrade", "head"],
+                capture_output=True, text=True, cwd="/app"
+            )
+            if result.returncode == 0:
+                logger.info("✅ Database migrations applied successfully")
+                if result.stdout:
+                    logger.info(result.stdout)
+            else:
+                logger.error(f"❌ Migration failed: {result.stderr}")
+        except Exception as e:
+            logger.error(f"❌ Migration error: {e}")
+
         if settings.ENVIRONMENT != "test":
             from app.tasks.scheduler import start_scheduler
             start_scheduler()
