@@ -7,7 +7,7 @@ import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { Table } from '@/components/common/Table';
 import { TeamModal } from '@/components/forms/TeamModal';
-import { apiService } from '@/services/api.service';
+import { teamService } from '@/services/api.service';
 import { Team } from '@/types';
 import { useRBAC } from '@/hooks/use-rbac';
 
@@ -17,13 +17,15 @@ export default function TeamsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
-  const { data: teams, isLoading } = useQuery({
+  const { data: teamsData, isLoading } = useQuery({
     queryKey: ['teams'],
-    queryFn: () => apiService.get<Team[]>('/teams'),
+    queryFn: () => teamService.list(),
   });
 
+  const teams = teamsData?.items ?? [];
+
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiService.delete(`/teams/${id}`),
+    mutationFn: (id: string) => teamService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teams'] });
     },
@@ -38,7 +40,7 @@ export default function TeamsPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this team?')) {
       deleteMutation.mutate(id);
     }
@@ -49,36 +51,37 @@ export default function TeamsPage() {
     setEditingTeam(null);
   };
 
+  const getTeamLeadName = (team: Team) => {
+    const lead = team.team_lead;
+    if (!lead) return 'Not Assigned';
+    return lead.full_name ?? `${lead.first_name} ${lead.last_name}`;
+  };
+
   const columns = [
     { key: 'id', label: 'ID' },
-    { key: 'name', label: 'Team Name' },
+    { key: 'team_name', label: 'Team Name' },
     { key: 'description', label: 'Description' },
     {
       key: 'department',
       label: 'Department',
-      render: (team: Team) => team.department?.name || 'N/A',
+      render: (team: Team) =>
+        team.department?.department_name ?? team.department?.name ?? 'N/A',
     },
     {
       key: 'team_lead',
       label: 'Team Lead',
-      render: (team: Team) => team.team_lead?.full_name || 'Not Assigned',
+      render: (team: Team) => getTeamLeadName(team),
     },
     {
       key: 'members_count',
       label: 'Members',
-      render: (team: Team) => team.members?.length || 0,
+      render: (team: Team) => team.members?.length ?? 0,
     },
     {
       key: 'is_active',
       label: 'Status',
       render: (team: Team) => (
-        <span
-          className={`px-2 py-1 rounded text-xs ${
-            team.is_active
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}
-        >
+        <span className={`px-2 py-1 rounded text-xs ${team.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
           {team.is_active ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -89,20 +92,12 @@ export default function TeamsPage() {
       render: (team: Team) => (
         <div className="flex gap-2">
           {canEdit && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => handleEdit(team)}
-            >
+            <Button variant="secondary" size="sm" onClick={() => handleEdit(team)}>
               Edit
             </Button>
           )}
           {canDelete && (
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => handleDelete(team.id)}
-            >
+            <Button variant="danger" size="sm" onClick={() => handleDelete(team.id)}>
               Delete
             </Button>
           )}
@@ -117,9 +112,7 @@ export default function TeamsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Teams</h1>
           {canCreate && (
-            <Button onClick={() => setIsModalOpen(true)}>
-              Add Team
-            </Button>
+            <Button onClick={() => setIsModalOpen(true)}>Add Team</Button>
           )}
         </div>
 
@@ -127,18 +120,12 @@ export default function TeamsPage() {
           {isLoading ? (
             <div className="text-center py-8">Loading teams...</div>
           ) : (
-            <Table
-              data={teams || []}
-              columns={columns}
-            />
+            <Table data={teams} columns={columns} />
           )}
         </Card>
 
         {isModalOpen && (
-          <TeamModal
-            team={editingTeam}
-            onClose={handleCloseModal}
-          />
+          <TeamModal team={editingTeam} onClose={handleCloseModal} />
         )}
       </div>
     </ProtectedLayout>

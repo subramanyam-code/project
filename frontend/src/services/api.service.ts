@@ -165,3 +165,24 @@ export const searchService = {
   search: (q: string) =>
     api.get("/search", { params: { q } }).then(r => r.data),
 };
+
+// Unified apiService export for components using generic API calls
+export const apiService = {
+  auth: authService,
+  companies: companyService,
+  departments: departmentService,
+  teams: teamService,
+  users: userService,
+  projects: projectService,
+  status: statusService,
+  reports: reportService,
+  notifications: notificationService,
+  audit: auditService,
+  search: searchService,
+  // Direct API methods
+  get: api.get.bind(api),
+  post: api.post.bind(api),
+  put: api.put.bind(api),
+  patch: api.patch.bind(api),
+  delete: api.delete.bind(api),
+};

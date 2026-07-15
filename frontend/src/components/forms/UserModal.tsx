@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiService } from '@/services/api.service';
-import { User, Department, Role, Company } from '@/types';
+import { userService, departmentService, companyService } from '@/services/api.service';
+import { User, Department, Company } from '@/types';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
 import { Select } from '@/components/common/Select';
@@ -17,54 +17,61 @@ interface UserModalProps {
 export function UserModal({ user, onClose }: UserModalProps) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
     email: '',
-    full_name: '',
-    employee_id: '',
     phone: '',
+    employee_id: '',
     password: '',
-    role_id: '',
     department_id: '',
     company_id: '',
     is_active: true,
   });
   const [error, setError] = useState('');
 
-  const { data: departments } = useQuery({
+  const { data: deptData } = useQuery({
     queryKey: ['departments'],
-    queryFn: () => apiService.get<Department[]>('/departments'),
+    queryFn: () => departmentService.list(),
   });
+  const departments = deptData?.items ?? [];
 
-  const { data: roles } = useQuery({
+  const { data: rolesData } = useQuery({
     queryKey: ['roles'],
-    queryFn: () => apiService.get<Role[]>('/roles'),
+    queryFn: () => userService.roles(),
   });
+  const roles = rolesData ?? [];
 
-  const { data: companies } = useQuery({
+  const { data: companiesData } = useQuery({
     queryKey: ['companies'],
-    queryFn: () => apiService.get<Company[]>('/companies'),
+    queryFn: () => companyService.list(),
   });
+  const companies = companiesData?.items ?? [];
+
+  const [selectedRoleId, setSelectedRoleId] = useState('');
 
   useEffect(() => {
     if (user) {
+      const nameParts = (user.full_name ?? '').split(' ');
       setFormData({
+        first_name: user.first_name ?? nameParts[0] ?? '',
+        last_name: user.last_name ?? nameParts.slice(1).join(' ') ?? '',
         email: user.email,
-        full_name: user.full_name,
-        employee_id: user.employee_id || '',
-        phone: user.phone || '',
+        phone: user.phone ?? '',
+        employee_id: user.employee_id ?? '',
         password: '',
-        role_id: user.role_id?.toString() || '',
-        department_id: user.department_id?.toString() || '',
-        company_id: user.company_id?.toString() || '',
+        department_id: user.department_id ?? '',
+        company_id: user.company_id ?? '',
         is_active: user.is_active,
       });
+      setSelectedRoleId(user.role_id ?? user.role?.id ?? '');
     }
   }, [user]);
 
   const mutation = useMutation({
-    mutationFn: (data: any) =>
+    mutationFn: (data: Record<string, unknown>) =>
       user
-        ? apiService.patch(`/users/${user.id}`, data)
-        : apiService.post('/users', data),
+        ? userService.update(user.id, data)
+        : userService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       onClose();
@@ -78,14 +85,14 @@ export function UserModal({ user, onClose }: UserModalProps) {
     e.preventDefault();
     setError('');
 
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       ...formData,
-      role_id: parseInt(formData.role_id),
-      department_id: formData.department_id ? parseInt(formData.department_id) : null,
-      company_id: formData.company_id ? parseInt(formData.company_id) : null,
+      role_id: selectedRoleId || undefined,
+      department_id: formData.department_id || undefined,
+      company_id: formData.company_id || undefined,
     };
 
-    // Don't send password if it's empty during edit
+    // Don't send empty password on edit
     if (user && !formData.password) {
       delete payload.password;
     }
@@ -93,25 +100,30 @@ export function UserModal({ user, onClose }: UserModalProps) {
     mutation.mutate(payload);
   };
 
+  const getDeptName = (d: Department) => d.department_name ?? d.name ?? '';
+  const getCompanyName = (c: Company) => c.company_name ?? c.name ?? '';
+
   return (
-    <Dialog
-      isOpen={true}
-      onClose={onClose}
-      title={user ? 'Edit User' : 'Add User'}
-    >
+    <Dialog isOpen={true} onClose={onClose} title={user ? 'Edit User' : 'Add User'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-            {error}
-          </div>
+          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">{error}</div>
         )}
 
-        <Input
-          label="Full Name"
-          value={formData.full_name}
-          onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-          required
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="First Name"
+            value={formData.first_name}
+            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+            required
+          />
+          <Input
+            label="Last Name"
+            value={formData.last_name}
+            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+            required
+          />
+        </div>
 
         <Input
           label="Email"
@@ -120,21 +132,16 @@ export function UserModal({ user, onClose }: UserModalProps) {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
-
         <Input
           label="Employee ID"
           value={formData.employee_id}
-          onChange={(e) =>
-            setFormData({ ...formData, employee_id: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
         />
-
         <Input
           label="Phone"
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
         />
-
         <Input
           label={user ? 'Password (leave blank to keep current)' : 'Password'}
           type="password"
@@ -145,14 +152,14 @@ export function UserModal({ user, onClose }: UserModalProps) {
 
         <Select
           label="Role"
-          value={formData.role_id}
-          onChange={(e) => setFormData({ ...formData, role_id: e.target.value })}
+          value={selectedRoleId}
+          onChange={(e) => setSelectedRoleId(e.target.value)}
           required
         >
           <option value="">Select Role</option>
-          {roles?.map((role) => (
+          {roles.map((role) => (
             <option key={role.id} value={role.id}>
-              {role.name}
+              {role.role_name}
             </option>
           ))}
         </Select>
@@ -163,25 +170,19 @@ export function UserModal({ user, onClose }: UserModalProps) {
           onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
         >
           <option value="">Select Company</option>
-          {companies?.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
+          {companies.map((c) => (
+            <option key={c.id} value={c.id}>{getCompanyName(c)}</option>
           ))}
         </Select>
 
         <Select
           label="Department"
           value={formData.department_id}
-          onChange={(e) =>
-            setFormData({ ...formData, department_id: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, department_id: e.target.value })}
         >
           <option value="">Select Department</option>
-          {departments?.map((dept) => (
-            <option key={dept.id} value={dept.id}>
-              {dept.name}
-            </option>
+          {departments.map((d) => (
+            <option key={d.id} value={d.id}>{getDeptName(d)}</option>
           ))}
         </Select>
 
@@ -190,20 +191,14 @@ export function UserModal({ user, onClose }: UserModalProps) {
             type="checkbox"
             id="is_active"
             checked={formData.is_active}
-            onChange={(e) =>
-              setFormData({ ...formData, is_active: e.target.checked })
-            }
+            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
-            Active
-          </label>
+          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">Active</label>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={mutation.isPending}>
             {user ? 'Update' : 'Create'}
           </Button>

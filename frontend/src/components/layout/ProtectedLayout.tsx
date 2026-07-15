@@ -5,8 +5,14 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
+import { RoleName } from '@/hooks/use-rbac';
 
-export const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
+interface ProtectedLayoutProps {
+  children: React.ReactNode;
+  requiredPermissions?: RoleName[];
+}
+
+export const ProtectedLayout = ({ children, requiredPermissions }: ProtectedLayoutProps) => {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -15,6 +21,15 @@ export const ProtectedLayout = ({ children }: { children: React.ReactNode }) => 
       router.push('/auth/login');
     }
   }, [user, loading, router]);
+
+  React.useEffect(() => {
+    if (!loading && user && requiredPermissions && requiredPermissions.length > 0) {
+      const userRole = user.role?.role_name as RoleName | undefined;
+      if (userRole && !requiredPermissions.includes(userRole)) {
+        router.push('/dashboard');
+      }
+    }
+  }, [user, loading, requiredPermissions, router]);
 
   if (loading) {
     return (

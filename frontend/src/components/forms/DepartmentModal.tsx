@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { apiService } from '@/services/api.service';
+import { departmentService, companyService } from '@/services/api.service';
 import { Department, Company } from '@/types';
 import { Button } from '@/components/common/Button';
 import { Input } from '@/components/common/Input';
@@ -18,34 +18,35 @@ interface DepartmentModalProps {
 export function DepartmentModal({ department, onClose }: DepartmentModalProps) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
-    name: '',
+    department_name: '',
     description: '',
     company_id: '',
     is_active: true,
   });
   const [error, setError] = useState('');
 
-  const { data: companies } = useQuery({
+  const { data: companiesData } = useQuery({
     queryKey: ['companies'],
-    queryFn: () => apiService.get<Company[]>('/companies'),
+    queryFn: () => companyService.list(),
   });
+  const companies = companiesData?.items ?? [];
 
   useEffect(() => {
     if (department) {
       setFormData({
-        name: department.name,
-        description: department.description || '',
-        company_id: department.company_id?.toString() || '',
-        is_active: department.is_active,
+        department_name: department.department_name ?? department.name ?? '',
+        description: department.description ?? '',
+        company_id: department.company_id ?? '',
+        is_active: department.is_active ?? true,
       });
     }
   }, [department]);
 
   const mutation = useMutation({
-    mutationFn: (data: any) =>
+    mutationFn: (data: typeof formData) =>
       department
-        ? apiService.patch(`/departments/${department.id}`, data)
-        : apiService.post('/departments', data),
+        ? departmentService.update(department.id, data)
+        : departmentService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
       onClose();
@@ -58,53 +59,38 @@ export function DepartmentModal({ department, onClose }: DepartmentModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    mutation.mutate({
-      ...formData,
-      company_id: parseInt(formData.company_id),
-    });
+    mutation.mutate(formData);
   };
 
+  const getCompanyName = (c: Company) => c.company_name ?? c.name ?? '';
+
   return (
-    <Dialog
-      isOpen={true}
-      onClose={onClose}
-      title={department ? 'Edit Department' : 'Add Department'}
-    >
+    <Dialog isOpen={true} onClose={onClose} title={department ? 'Edit Department' : 'Add Department'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-            {error}
-          </div>
+          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">{error}</div>
         )}
 
         <Input
           label="Department Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.department_name}
+          onChange={(e) => setFormData({ ...formData, department_name: e.target.value })}
           required
         />
-
         <Textarea
           label="Description"
           value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
         />
-
         <Select
           label="Company"
           value={formData.company_id}
-          onChange={(e) =>
-            setFormData({ ...formData, company_id: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, company_id: e.target.value })}
           required
         >
           <option value="">Select Company</option>
-          {companies?.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
+          {companies.map((c) => (
+            <option key={c.id} value={c.id}>{getCompanyName(c)}</option>
           ))}
         </Select>
 
@@ -113,20 +99,14 @@ export function DepartmentModal({ department, onClose }: DepartmentModalProps) {
             type="checkbox"
             id="is_active"
             checked={formData.is_active}
-            onChange={(e) =>
-              setFormData({ ...formData, is_active: e.target.checked })
-            }
+            onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
-            Active
-          </label>
+          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">Active</label>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
+          <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={mutation.isPending}>
             {department ? 'Update' : 'Create'}
           </Button>

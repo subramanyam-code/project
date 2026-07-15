@@ -10,6 +10,9 @@ export function useRbac() {
   const hasMinimumRole = (min: RoleName) =>
     !!role && HIERARCHY.indexOf(role) <= HIERARCHY.indexOf(min);
 
+  const hasPermission = (roles: RoleName[]) =>
+    !!role && roles.includes(role);
+
   return {
     role,
     isSuperAdmin: role === "super_admin",
@@ -18,5 +21,9 @@ export function useRbac() {
     isTeamLead: hasMinimumRole("team_lead"),
     isEmployee: hasMinimumRole("employee"),
     hasMinimumRole,
+    hasPermission,
   };
 }
+
+// Export alias for components using useRBAC
+export const useRBAC = useRbac;

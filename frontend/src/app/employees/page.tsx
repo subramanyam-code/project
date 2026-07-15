@@ -9,7 +9,7 @@ import { Table } from '@/components/common/Table';
 import { Input } from '@/components/common/Input';
 import { Select } from '@/components/common/Select';
 import { UserModal } from '@/components/forms/UserModal';
-import { apiService } from '@/services/api.service';
+import { userService } from '@/services/api.service';
 import { User } from '@/types';
 import { useRBAC } from '@/hooks/use-rbac';
 
@@ -21,15 +21,15 @@ export default function EmployeesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
 
-  const { data: users, isLoading } = useQuery({
+  const { data: usersData, isLoading } = useQuery({
     queryKey: ['users', searchTerm, filterRole],
-    queryFn: () => apiService.get<User[]>('/users', {
-      params: { search: searchTerm, role: filterRole },
-    }),
+    queryFn: () => userService.list({ search: searchTerm, role: filterRole }),
   });
 
+  const users = usersData?.items ?? [];
+
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiService.delete(`/users/${id}`),
+    mutationFn: (id: string) => userService.update(id, { is_active: false }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
@@ -44,8 +44,8 @@ export default function EmployeesPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+  const handleDelete = (id: string) => {
+    if (window.confirm('Are you sure you want to deactivate this user?')) {
       deleteMutation.mutate(id);
     }
   };
@@ -55,14 +55,17 @@ export default function EmployeesPage() {
     setEditingUser(null);
   };
 
+  const getUserName = (user: User) =>
+    user.full_name ?? `${user.first_name} ${user.last_name}`;
+
   const columns = [
     { key: 'id', label: 'ID' },
     {
-      key: 'full_name',
+      key: 'name',
       label: 'Name',
       render: (user: User) => (
         <div>
-          <div className="font-medium">{user.full_name}</div>
+          <div className="font-medium">{getUserName(user)}</div>
           <div className="text-sm text-gray-500">{user.email}</div>
         </div>
       ),
@@ -71,29 +74,26 @@ export default function EmployeesPage() {
     {
       key: 'role',
       label: 'Role',
-      render: (user: User) => user.role?.name || 'N/A',
+      render: (user: User) =>
+        user.role?.role_name ?? user.role?.name ?? 'N/A',
     },
     {
       key: 'department',
       label: 'Department',
-      render: (user: User) => user.department?.name || 'N/A',
+      render: (user: User) =>
+        user.department?.department_name ?? user.department?.name ?? 'N/A',
     },
     {
       key: 'teams',
       label: 'Teams',
-      render: (user: User) => user.teams?.map(t => t.name).join(', ') || 'None',
+      render: (user: User) =>
+        user.teams?.map(t => t.team_name ?? t.name).join(', ') || 'None',
     },
     {
       key: 'is_active',
       label: 'Status',
       render: (user: User) => (
-        <span
-          className={`px-2 py-1 rounded text-xs ${
-            user.is_active
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}
-        >
+        <span className={`px-2 py-1 rounded text-xs ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
           {user.is_active ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -104,21 +104,13 @@ export default function EmployeesPage() {
       render: (user: User) => (
         <div className="flex gap-2">
           {canEdit && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => handleEdit(user)}
-            >
+            <Button variant="secondary" size="sm" onClick={() => handleEdit(user)}>
               Edit
             </Button>
           )}
           {canDelete && (
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => handleDelete(user.id)}
-            >
-              Delete
+            <Button variant="danger" size="sm" onClick={() => handleDelete(user.id)}>
+              Deactivate
             </Button>
           )}
         </div>
@@ -132,9 +124,7 @@ export default function EmployeesPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Employees</h1>
           {canCreate && (
-            <Button onClick={() => setIsModalOpen(true)}>
-              Add Employee
-            </Button>
+            <Button onClick={() => setIsModalOpen(true)}>Add Employee</Button>
           )}
         </div>
 
@@ -167,18 +157,12 @@ export default function EmployeesPage() {
           {isLoading ? (
             <div className="text-center py-8">Loading employees...</div>
           ) : (
-            <Table
-              data={users || []}
-              columns={columns}
-            />
+            <Table data={users} columns={columns} />
           )}
         </Card>
 
         {isModalOpen && (
-          <UserModal
-            user={editingUser}
-            onClose={handleCloseModal}
-          />
+          <UserModal user={editingUser} onClose={handleCloseModal} />
         )}
       </div>
     </ProtectedLayout>
