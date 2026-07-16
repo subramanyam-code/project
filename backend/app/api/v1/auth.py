@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request, BackgroundTasks
+from fastapi import APIRouter, Depends, Request, BackgroundTasks, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from app.database.session import get_db
 from app.schemas.auth import LoginRequest, Token, RefreshTokenRequest, ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest, RegisterRequest
 from app.schemas.common import MessageResponse
@@ -8,6 +9,8 @@ from app.services.auth_service import AuthService
 from app.services.email_service import EmailService
 from app.auth.dependencies import get_current_active_user
 from app.models.user import User
+from app.models.role import Role
+from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -63,3 +66,23 @@ def change_password(body: ChangePasswordRequest, user: User = Depends(get_curren
 @router.get("/me", response_model=UserResponse)
 def get_me(user: User = Depends(get_current_active_user)):
     return user
+
+
+@router.post("/make-super-admin", response_model=MessageResponse)
+def make_super_admin(email: str, secret: str, db: Session = Depends(get_db)):
+    """
+    One-time endpoint to promote a user to super_admin.
+    Requires the SECRET_KEY as proof — remove or disable after first use.
+    """
+    if secret != settings.SECRET_KEY:
+        raise HTTPException(status_code=403, detail="Invalid secret")
+    user = db.execute(select(User).where(User.email == email)).scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    role = db.execute(select(Role).where(Role.role_name == "super_admin")).scalar_one_or_none()
+    if not role:
+        raise HTTPException(status_code=404, detail="super_admin role not found")
+    user.role_id = role.id
+    user.is_verified = True
+    db.commit()
+    return MessageResponse(message=f"{email} is now super_admin")
