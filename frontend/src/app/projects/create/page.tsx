@@ -59,18 +59,18 @@ export default function CreateProjectPage() {
   return (
     <ProtectedLayout>
       <div className="max-w-3xl mx-auto space-y-6">
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/projects" className="hover:text-blue-600">Projects</Link>
+        <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <Link href="/projects" className="hover:text-blue-600 dark:hover:text-blue-400">Projects</Link>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          <span className="text-gray-900 font-medium">New Project</span>
+          <span className="text-gray-900 dark:text-white font-medium">New Project</span>
         </nav>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="space-y-6">
             {errors.general && (
-              <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <p className="text-sm text-red-700">{errors.general}</p>
+                <p className="text-sm text-red-700 dark:text-red-400">{errors.general}</p>
               </div>
             )}
 
@@ -78,30 +78,30 @@ export default function CreateProjectPage() {
               <CardHeader title="Project Details" subtitle="Basic information about the project" />
               <CardBody className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Name <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Name <span className="text-red-500">*</span></label>
                   <input value={form.project_name} onChange={set('project_name')} placeholder="e.g. Website Redesign Q3" maxLength={255}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.project_name ? 'border-red-400 bg-red-50' : 'border-gray-300'}`} />
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.project_name ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'}`} />
                   <div className="flex justify-between mt-1">
-                    {errors.project_name ? <p className="text-xs text-red-600">{errors.project_name}</p> : <span />}
-                    <span className="text-xs text-gray-400">{form.project_name.length}/255</span>
+                    {errors.project_name ? <p className="text-xs text-red-600 dark:text-red-400">{errors.project_name}</p> : <span />}
+                    <span className="text-xs text-gray-400 dark:text-gray-500">{form.project_name.length}/255</span>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                   <textarea value={form.description} onChange={set('description')} rows={4} maxLength={2000} placeholder="Project goals, scope, and deliverables…"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-                  <div className="text-right mt-1"><span className="text-xs text-gray-400">{form.description.length}/2000</span></div>
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                  <div className="text-right mt-1"><span className="text-xs text-gray-400 dark:text-gray-500">{form.description.length}/2000</span></div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                    <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                       {['not_started','in_progress','on_hold','completed','cancelled'].map(s => <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                    <select value={form.priority} onChange={set('priority')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
+                    <select value={form.priority} onChange={set('priority')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                       {['low','medium','high','critical'].map(p => <option key={p} value={p}>{p.replace(/\b\w/g, c => c.toUpperCase())}</option>)}
                     </select>
                   </div>
@@ -114,28 +114,28 @@ export default function CreateProjectPage() {
               <CardBody className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                    <input type="date" value={form.start_date} onChange={set('start_date')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                    <input type="date" value={form.start_date} onChange={set('start_date')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
                     <input type="date" value={form.end_date} onChange={set('end_date')} min={form.start_date || undefined}
-                      className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.end_date ? 'border-red-400' : 'border-gray-300'}`} />
-                    {errors.end_date && <p className="text-xs text-red-600 mt-1">{errors.end_date}</p>}
+                      className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.end_date ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                    {errors.end_date && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.end_date}</p>}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Initial Progress (%)</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Initial Progress (%)</label>
                   <div className="flex items-center gap-4">
                     <input type="range" min={0} max={100} step={5} value={form.progress_percentage} onChange={set('progress_percentage')} className="flex-1 accent-blue-600" />
                     <div className="flex items-center gap-1">
                       <input type="number" min={0} max={100} value={form.progress_percentage} onChange={set('progress_percentage')}
-                        className={`w-16 px-2 py-1.5 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.progress_percentage ? 'border-red-400' : 'border-gray-300'}`} />
-                      <span className="text-sm text-gray-500">%</span>
+                        className={`w-16 px-2 py-1.5 border rounded-lg text-sm text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.progress_percentage ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                      <span className="text-sm text-gray-500 dark:text-gray-400">%</span>
                     </div>
                   </div>
-                  <div className="mt-2 bg-gray-200 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: `${Math.min(100, Number(form.progress_percentage) || 0)}%` }} /></div>
-                  {errors.progress_percentage && <p className="text-xs text-red-600 mt-1">{errors.progress_percentage}</p>}
+                  <div className="mt-2 bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: `${Math.min(100, Number(form.progress_percentage) || 0)}%` }} /></div>
+                  {errors.progress_percentage && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.progress_percentage}</p>}
                 </div>
               </CardBody>
             </Card>
@@ -144,12 +144,12 @@ export default function CreateProjectPage() {
               <CardHeader title="Team Assignment" subtitle="Assign a project manager" />
               <CardBody>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Manager</label>
-                  <select value={form.manager_id} onChange={set('manager_id')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Manager</label>
+                  <select value={form.manager_id} onChange={set('manager_id')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">— Select a manager (optional) —</option>
                     {managers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}{u.job_title ? ` — ${u.job_title}` : ''}{u.id === user?.id ? ' (You)' : ''}</option>)}
                   </select>
-                  <p className="text-xs text-gray-400 mt-1">You can add team members after creating the project.</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">You can add team members after creating the project.</p>
                 </div>
               </CardBody>
             </Card>

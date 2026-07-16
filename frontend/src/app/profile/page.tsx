@@ -55,10 +55,10 @@ export default function ProfilePage() {
   return (
     <ProtectedLayout>
       <div className="max-w-3xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
 
-        {success && <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700"><span>✅</span>{success}</div>}
-        {error && <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"><span>⚠️</span>{error}</div>}
+        {success && <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-700 dark:text-green-400"><span>✅</span>{success}</div>}
+        {error && <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400"><span>⚠️</span>{error}</div>}
 
         {/* Profile */}
         <Card>
@@ -68,21 +68,21 @@ export default function ProfilePage() {
               <form onSubmit={handleSaveProfile} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
-                    <input value={profile.first_name} onChange={e => setProfile(p => ({ ...p, first_name: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">First Name <span className="text-red-500">*</span></label>
+                    <input value={profile.first_name} onChange={e => setProfile(p => ({ ...p, first_name: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name <span className="text-red-500">*</span></label>
-                    <input value={profile.last_name} onChange={e => setProfile(p => ({ ...p, last_name: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Name <span className="text-red-500">*</span></label>
+                    <input value={profile.last_name} onChange={e => setProfile(p => ({ ...p, last_name: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
-                  <input value={profile.job_title} onChange={e => setProfile(p => ({ ...p, job_title: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Software Engineer" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Title</label>
+                  <input value={profile.job_title} onChange={e => setProfile(p => ({ ...p, job_title: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Software Engineer" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="+1 555 0100" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone</label>
+                  <input value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="+1 555 0100" />
                 </div>
                 <div className="flex gap-3">
                   <Button type="submit" variant="primary" loading={saving}>Save Changes</Button>
@@ -96,8 +96,8 @@ export default function ProfilePage() {
                     {user.first_name[0].toUpperCase()}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">{user.first_name} {user.last_name}</h2>
-                    <p className="text-sm text-gray-500">{user.role?.role_name?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) ?? ''}</p>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user.first_name} {user.last_name}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{user.role?.role_name?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) ?? ''}</p>
                   </div>
                 </div>
                 {[
@@ -108,9 +108,9 @@ export default function ProfilePage() {
                   { label: 'Email Verified', value: user.is_verified ? 'Yes' : 'No' },
                   { label: 'Last Login', value: user.last_login ? new Date(user.last_login).toLocaleString() : '—' },
                 ].map(item => (
-                  <div key={item.label} className="flex justify-between py-3 border-b border-gray-100 last:border-0">
-                    <span className="text-sm text-gray-500">{item.label}</span>
-                    <span className="text-sm font-medium text-gray-900">{item.value}</span>
+                  <div key={item.label} className="flex justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{item.label}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -125,22 +125,22 @@ export default function ProfilePage() {
             {changingPw ? (
               <form onSubmit={handleChangePw} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Password <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Current Password <span className="text-red-500">*</span></label>
                   <input type="password" value={pw.current_password} onChange={e => { setPw(p => ({ ...p, current_password: e.target.value })); setPwErrors(er => { const n = { ...er }; delete n.current_password; return n; }); }}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.current_password ? 'border-red-400' : 'border-gray-300'}`} />
-                  {pwErrors.current_password && <p className="text-xs text-red-600 mt-1">{pwErrors.current_password}</p>}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.current_password ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                  {pwErrors.current_password && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{pwErrors.current_password}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">New Password <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Password <span className="text-red-500">*</span></label>
                   <input type="password" value={pw.new_password} onChange={e => { setPw(p => ({ ...p, new_password: e.target.value })); setPwErrors(er => { const n = { ...er }; delete n.new_password; return n; }); }}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.new_password ? 'border-red-400' : 'border-gray-300'}`} placeholder="Min 8 characters" />
-                  {pwErrors.new_password && <p className="text-xs text-red-600 mt-1">{pwErrors.new_password}</p>}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.new_password ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} placeholder="Min 8 characters" />
+                  {pwErrors.new_password && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{pwErrors.new_password}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm New Password <span className="text-red-500">*</span></label>
                   <input type="password" value={pw.confirm} onChange={e => { setPw(p => ({ ...p, confirm: e.target.value })); setPwErrors(er => { const n = { ...er }; delete n.confirm; return n; }); }}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.confirm ? 'border-red-400' : 'border-gray-300'}`} />
-                  {pwErrors.confirm && <p className="text-xs text-red-600 mt-1">{pwErrors.confirm}</p>}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${pwErrors.confirm ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                  {pwErrors.confirm && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{pwErrors.confirm}</p>}
                 </div>
                 <div className="flex gap-3">
                   <Button type="submit" variant="primary" loading={saving}>Update Password</Button>
@@ -148,7 +148,7 @@ export default function ProfilePage() {
                 </div>
               </form>
             ) : (
-              <p className="text-sm text-gray-500">Keep your account secure by regularly updating your password.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Keep your account secure by regularly updating your password.</p>
             )}
           </CardBody>
         </Card>

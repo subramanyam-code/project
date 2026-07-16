@@ -82,7 +82,7 @@ export function TeamModal({ team, onClose }: TeamModalProps) {
     <Dialog isOpen={true} onClose={onClose} title={team ? 'Edit Team' : 'Add Team'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">{error}</div>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">{error}</div>
         )}
 
         <Input
@@ -127,7 +127,7 @@ export function TeamModal({ team, onClose }: TeamModalProps) {
             onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">Active</label>
+          <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">Active</label>
         </div>
 
         <div className="flex justify-end gap-2 pt-4">

@@ -65,34 +65,36 @@ export default function EmployeesPage() {
       label: 'Name',
       render: (user: User) => (
         <div>
-          <div className="font-medium">{getUserName(user)}</div>
-          <div className="text-sm text-gray-500">{user.email}</div>
+          <div className="font-medium text-gray-900 dark:text-white">{getUserName(user)}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
         </div>
       ),
     },
-    { key: 'job_title', label: 'Job Title', render: (user: User) => user.job_title ?? 'N/A' },
+    { key: 'job_title', label: 'Job Title', render: (user: User) => <span className="text-gray-700 dark:text-gray-300">{user.job_title ?? 'N/A'}</span> },
     {
       key: 'role',
       label: 'Role',
-      render: (user: User) =>
-        user.role?.role_name ?? user.role?.name ?? 'N/A',
+      render: (user: User) => (
+        <span className="text-gray-700 dark:text-gray-300">{user.role?.role_name ?? user.role?.name ?? 'N/A'}</span>
+      ),
     },
     {
       key: 'department',
       label: 'Department',
-      render: (user: User) =>
-        user.department?.department_name ?? user.department?.name ?? 'N/A',
+      render: (user: User) => (
+        <span className="text-gray-700 dark:text-gray-300">{user.department?.department_name ?? user.department?.name ?? 'N/A'}</span>
+      ),
     },
     {
       key: 'team',
       label: 'Team',
-      render: (user: User) => user.team_id ? user.team_id : 'None',
+      render: (user: User) => <span className="text-gray-700 dark:text-gray-300">{user.team_id ? user.team_id : 'None'}</span>,
     },
     {
       key: 'is_active',
       label: 'Status',
       render: (user: User) => (
-        <span className={`px-2 py-1 rounded text-xs ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+        <span className={`px-2 py-1 rounded text-xs ${user.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'}`}>
           {user.is_active ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -121,7 +123,7 @@ export default function EmployeesPage() {
     <ProtectedLayout requiredPermissions={['super_admin', 'company_admin', 'project_manager', 'team_lead']}>
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Employees</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Employees</h1>
           {canCreate && (
             <Button onClick={() => setIsModalOpen(true)}>Add Employee</Button>
           )}
@@ -154,7 +156,7 @@ export default function EmployeesPage() {
 
         <Card>
           {isLoading ? (
-            <div className="text-center py-8">Loading employees...</div>
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading employees...</div>
           ) : (
             <Table data={users} columns={columns} />
           )}

@@ -6,25 +6,25 @@ import { Card } from '@/components/common/Card';
 import { userService } from '@/services/api.service';
 
 const ROLE_DESCRIPTIONS: Record<string, { desc: string; color: string }> = {
-  super_admin: { 
-    desc: 'Full system access - manages all companies, users, and configuration.', 
-    color: 'bg-red-100 text-red-800' 
+  super_admin: {
+    desc: 'Full system access - manages all companies, users, and configuration.',
+    color: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'
   },
-  company_admin: { 
-    desc: 'Manages a single company - departments, teams, users, and projects.', 
-    color: 'bg-orange-100 text-orange-800' 
+  company_admin: {
+    desc: 'Manages a single company - departments, teams, users, and projects.',
+    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300'
   },
-  project_manager: { 
-    desc: 'Creates and manages projects, assigns teams and members.', 
-    color: 'bg-blue-100 text-blue-800' 
+  project_manager: {
+    desc: 'Creates and manages projects, assigns teams and members.',
+    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
   },
-  team_lead: { 
-    desc: 'Leads a team, monitors member status and assigns tasks.', 
-    color: 'bg-purple-100 text-purple-800' 
+  team_lead: {
+    desc: 'Leads a team, monitors member status and assigns tasks.',
+    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300'
   },
-  employee: { 
-    desc: 'Submits daily status, views own projects and tasks.', 
-    color: 'bg-green-100 text-green-800' 
+  employee: {
+    desc: 'Submits daily status, views own projects and tasks.',
+    color: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
   },
 };
 
@@ -43,17 +43,17 @@ export default function RolesPage() {
     <ProtectedLayout>
       <div className="space-y-6">
         <div>
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-            <Link href="/admin" className="hover:text-blue-600">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
+            <Link href="/admin" className="hover:text-blue-600 dark:hover:text-blue-400">
               Admin
             </Link>
             <span>/</span>
-            <span className="text-gray-900 font-medium">Roles</span>
+            <span className="text-gray-900 dark:text-white font-medium">Roles</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             Roles & Permissions
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             System roles are predefined and cannot be modified.
           </p>
         </div>
@@ -62,8 +62,8 @@ export default function RolesPage() {
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <Card key={i} className="p-6">
-                <div className="h-4 bg-gray-200 rounded animate-pulse mb-3 w-1/2" />
-                <div className="h-3 bg-gray-100 rounded animate-pulse" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mb-3 w-1/2" />
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               </Card>
             ))
           ) : (
@@ -72,18 +72,18 @@ export default function RolesPage() {
               return (
                 <Card key={role.id} className="p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-3">
-                    <span 
+                    <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
-                        meta?.color ?? 'bg-gray-100 text-gray-700'
+                        meta?.color ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
                       }`}
                     >
                       {role.role_name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {meta?.desc ?? 'System role.'}
                   </p>
-                  <p className="text-xs text-gray-400 mt-3 font-mono">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 font-mono">
                     ID: {role.id.slice(0, 8)}...
                   </p>
                 </Card>
@@ -92,26 +92,26 @@ export default function RolesPage() {
           )}
         </div>
 
-        <Card className="p-6 bg-yellow-50 border-yellow-200">
+        <Card className="p-6 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
           <div className="flex gap-3">
-            <svg 
-              className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-5 h-5 text-yellow-600 dark:text-yellow-400 shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
             <div>
-              <p className="text-sm font-medium text-yellow-800">
+              <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                 Roles are managed by the system
               </p>
-              <p className="text-sm text-yellow-700 mt-1">
+              <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
                 To change a user's role, go to{' '}
                 <Link href="/admin/users" className="underline font-medium">
                   Users

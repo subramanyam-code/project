@@ -9,8 +9,8 @@ import type { DailyStatus, Project } from '@/types';
 
 const TASK_STATUSES = ['not_started', 'in_progress', 'completed', 'blocked'] as const;
 const STATUS_COLORS: Record<string, string> = {
-  not_started: 'bg-gray-100 text-gray-700', in_progress: 'bg-blue-100 text-blue-700',
-  completed: 'bg-green-100 text-green-700', blocked: 'bg-red-100 text-red-700',
+  not_started: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300', in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300', blocked: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
 };
 
 interface Form { project_id: string; task_title: string; description: string; status: string; hours_worked: string; blockers: string; tomorrow_plan: string }
@@ -96,8 +96,8 @@ export default function DailyStatusPage() {
       <div className="space-y-6 max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Daily Status</h1>
-            <p className="text-sm text-gray-500">{todayDate}</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daily Status</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{todayDate}</p>
           </div>
           {today && !editing && (
             <div className="flex gap-2">
@@ -109,64 +109,64 @@ export default function DailyStatusPage() {
 
         {/* Today's Status Card */}
         {loading ? (
-          <Card className="p-6"><div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 rounded w-1/3" /><div className="h-4 bg-gray-100 rounded w-2/3" /></div></Card>
+          <Card className="p-6"><div className="animate-pulse space-y-3"><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3" /><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3" /></div></Card>
         ) : !today || editing ? (
           <Card>
             <CardHeader title={today ? "Edit Today's Status" : "Submit Today's Status"} subtitle={today ? "Update your progress for today" : "How did your day go?"} />
             <CardBody>
-              {errors.general && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{errors.general}</div>}
+              {errors.general && <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">{errors.general}</div>}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Project <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project <span className="text-red-500">*</span></label>
                     <select value={form.project_id} onChange={set('project_id')}
-                      className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.project_id ? 'border-red-400' : 'border-gray-300'}`}>
+                      className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.project_id ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`}>
                       <option value="">— Select Project —</option>
                       {projects.map(p => <option key={p.id} value={p.id}>{p.project_name}</option>)}
                     </select>
-                    {errors.project_id && <p className="text-xs text-red-600 mt-1">{errors.project_id}</p>}
+                    {errors.project_id && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.project_id}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Task Status <span className="text-red-500">*</span></label>
-                    <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Task Status <span className="text-red-500">*</span></label>
+                    <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                       {TASK_STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>)}
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Task Title <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Task Title <span className="text-red-500">*</span></label>
                   <input value={form.task_title} onChange={set('task_title')} placeholder="What did you work on today?" maxLength={500}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.task_title ? 'border-red-400' : 'border-gray-300'}`} />
-                  {errors.task_title && <p className="text-xs text-red-600 mt-1">{errors.task_title}</p>}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.task_title ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                  {errors.task_title && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.task_title}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                   <textarea value={form.description} onChange={set('description')} rows={3} placeholder="Detailed description of work done…"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Hours Worked</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hours Worked</label>
                   <div className="flex items-center gap-3">
                     <input type="range" min={0} max={12} step={0.5} value={form.hours_worked} onChange={set('hours_worked')} className="flex-1 accent-blue-600" />
                     <div className="flex items-center gap-1">
-                      <input type="number" min={0} max={24} step={0.5} value={form.hours_worked} onChange={set('hours_worked')} className={`w-16 px-2 py-1.5 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.hours_worked ? 'border-red-400' : 'border-gray-300'}`} />
-                      <span className="text-sm text-gray-500">hrs</span>
+                      <input type="number" min={0} max={24} step={0.5} value={form.hours_worked} onChange={set('hours_worked')} className={`w-16 px-2 py-1.5 border rounded-lg text-sm text-center bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.hours_worked ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                      <span className="text-sm text-gray-500 dark:text-gray-400">hrs</span>
                     </div>
                   </div>
-                  {errors.hours_worked && <p className="text-xs text-red-600 mt-1">{errors.hours_worked}</p>}
+                  {errors.hours_worked && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.hours_worked}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Blockers {form.status === 'blocked' && <span className="text-red-500">*</span>}
                   </label>
                   <textarea value={form.blockers} onChange={set('blockers')} rows={2} placeholder="Any issues blocking your progress? (leave blank if none)"
-                    className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${errors.blockers ? 'border-red-400' : 'border-gray-300'}`} />
-                  {errors.blockers && <p className="text-xs text-red-600 mt-1">{errors.blockers}</p>}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${errors.blockers ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`} />
+                  {errors.blockers && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.blockers}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tomorrow's Plan</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tomorrow's Plan</label>
                   <textarea value={form.tomorrow_plan} onChange={set('tomorrow_plan')} rows={2} placeholder="What do you plan to work on tomorrow?"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
                 </div>
                 <div className="flex items-center justify-between pt-2">
                   {editing ? (
@@ -182,13 +182,13 @@ export default function DailyStatusPage() {
             <CardHeader title="Today's Status" subtitle={`Submitted for ${new Date().toLocaleDateString()}`} />
             <CardBody className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Status</p><span className={`inline-flex mt-1 items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[today.status]}`}>{today.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span></div>
-                <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Hours</p><p className="text-lg font-bold text-gray-900 mt-1">{today.hours_worked}h</p></div>
-                <div className="p-3 bg-gray-50 rounded-lg col-span-2"><p className="text-xs text-gray-500">Task</p><p className="text-sm font-medium text-gray-900 mt-1 truncate">{today.task_title}</p></div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg"><p className="text-xs text-gray-500 dark:text-gray-400">Status</p><span className={`inline-flex mt-1 items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[today.status]}`}>{today.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span></div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg"><p className="text-xs text-gray-500 dark:text-gray-400">Hours</p><p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{today.hours_worked}h</p></div>
+                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg col-span-2"><p className="text-xs text-gray-500 dark:text-gray-400">Task</p><p className="text-sm font-medium text-gray-900 dark:text-white mt-1 truncate">{today.task_title}</p></div>
               </div>
-              {today.description && <div><p className="text-xs font-medium text-gray-500 mb-1">Description</p><p className="text-sm text-gray-700">{today.description}</p></div>}
-              {today.blockers && <div className="p-3 bg-red-50 border border-red-100 rounded-lg"><p className="text-xs font-medium text-red-600 mb-1">🚧 Blockers</p><p className="text-sm text-red-700">{today.blockers}</p></div>}
-              {today.tomorrow_plan && <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg"><p className="text-xs font-medium text-blue-600 mb-1">📅 Tomorrow's Plan</p><p className="text-sm text-blue-700">{today.tomorrow_plan}</p></div>}
+              {today.description && <div><p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Description</p><p className="text-sm text-gray-700 dark:text-gray-300">{today.description}</p></div>}
+              {today.blockers && <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg"><p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1">🚧 Blockers</p><p className="text-sm text-red-700 dark:text-red-300">{today.blockers}</p></div>}
+              {today.tomorrow_plan && <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg"><p className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">📅 Tomorrow's Plan</p><p className="text-sm text-blue-700 dark:text-blue-300">{today.tomorrow_plan}</p></div>}
             </CardBody>
           </Card>
         )}
@@ -198,33 +198,33 @@ export default function DailyStatusPage() {
           <CardHeader title="Status History" subtitle="Your previous daily status submissions" />
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>{['Date', 'Project', 'Task', 'Status', 'Hours', 'Blockers'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{h}</th>
                 ))}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {history.length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-400 text-sm">No status history yet</td></tr>
+                  <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500 text-sm">No status history yet</td></tr>
                 ) : history.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{new Date(s.submit_date).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{projects.find(p => p.id === s.project_id)?.project_name ?? '—'}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 max-w-[200px] truncate">{s.task_title}</td>
+                  <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">{new Date(s.submit_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{projects.find(p => p.id === s.project_id)?.project_name ?? '—'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-[200px] truncate">{s.task_title}</td>
                     <td className="px-6 py-4"><span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[s.status]}`}>{s.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{s.hours_worked}h</td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-[150px] truncate">{s.blockers || '—'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{s.hours_worked}h</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-[150px] truncate">{s.blockers || '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <p className="text-sm text-gray-500">{((historyPage - 1) * PAGE) + 1}–{Math.min(historyPage * PAGE, historyTotal)} of {historyTotal}</p>
+            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">{((historyPage - 1) * PAGE) + 1}–{Math.min(historyPage * PAGE, historyTotal)} of {historyTotal}</p>
               <div className="flex gap-2">
-                <button onClick={() => setHistoryPage(p => p - 1)} disabled={historyPage === 1} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Previous</button>
-                <button onClick={() => setHistoryPage(p => p + 1)} disabled={historyPage === totalPages} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Next</button>
+                <button onClick={() => setHistoryPage(p => p - 1)} disabled={historyPage === 1} className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Previous</button>
+                <button onClick={() => setHistoryPage(p => p + 1)} disabled={historyPage === totalPages} className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Next</button>
               </div>
             </div>
           )}

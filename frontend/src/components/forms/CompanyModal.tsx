@@ -62,7 +62,7 @@ export function CompanyModal({ company, onClose }: CompanyModalProps) {
     <Dialog isOpen={true} onClose={onClose} title={company ? 'Edit Company' : 'Add Company'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">{error}</div>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">{error}</div>
         )}
 
         <Input
@@ -102,7 +102,7 @@ export function CompanyModal({ company, onClose }: CompanyModalProps) {
             onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             className="mr-2"
           />
-          <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
+          <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Active
           </label>
         </div>

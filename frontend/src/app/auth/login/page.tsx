@@ -30,7 +30,11 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      if (!err.response) {
+        setError('Cannot connect to server. Make sure the backend is running.');
+      } else {
+        setError(err.response?.data?.detail || 'Invalid email or password');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -43,17 +47,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
           <div className="text-center mb-8">
             <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mx-auto mb-4">
               TP
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">TSPM</h1>
-            <p className="text-gray-600 text-sm mt-1">Team Status & Project Management</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">TSPM</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Team Status & Project Management</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg mb-6">
               {error}
             </div>
           )}
@@ -79,10 +83,10 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded border-gray-300" />
-                <span className="text-sm text-gray-600">Remember me</span>
+                <input type="checkbox" className="rounded border-gray-300 dark:border-gray-600" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">Remember me</span>
               </label>
-              <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+              <Link href="/auth/forgot-password" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -98,9 +102,9 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center text-gray-600 text-sm mt-6">
+          <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-6">
             Don't have an account?{' '}
-            <Link href="/auth/register" className="text-blue-600 font-medium hover:underline">
+            <Link href="/auth/register" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
               Register here
             </Link>
           </p>

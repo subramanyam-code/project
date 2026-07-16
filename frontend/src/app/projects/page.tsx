@@ -10,12 +10,17 @@ import { useRbac } from '@/hooks/use-rbac';
 import type { Project } from '@/types';
 
 const STATUS_COLORS: Record<string, string> = {
-  not_started: 'bg-gray-100 text-gray-700', in_progress: 'bg-blue-100 text-blue-700',
-  on_hold: 'bg-yellow-100 text-yellow-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700',
+  not_started: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  on_hold: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+  cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
 };
 const PRIORITY_COLORS: Record<string, string> = {
-  low: 'bg-gray-100 text-gray-600', medium: 'bg-blue-100 text-blue-600',
-  high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700',
+  low: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+  medium: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300',
+  high: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
+  critical: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
 };
 
 export default function ProjectsPage() {
@@ -60,8 +65,8 @@ export default function ProjectsPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-            <p className="text-sm text-gray-500">{total} project{total !== 1 ? 's' : ''} total</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Projects</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{total} project{total !== 1 ? 's' : ''} total</p>
           </div>
           {canManage && (
             <Link href="/projects/create">
@@ -73,12 +78,12 @@ export default function ProjectsPage() {
         <Card>
           <div className="p-4 flex flex-wrap gap-3">
             <div className="flex-1 min-w-[200px] relative">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               <input type="text" placeholder="Search projects…" value={searchInput} onChange={e => setSearchInput(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">All Statuses</option>
               {['not_started','in_progress','on_hold','completed','cancelled'].map(s => (
                 <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
@@ -90,47 +95,47 @@ export default function ProjectsPage() {
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>{['Project', 'Status', 'Priority', 'Progress', 'Manager', 'Members', 'Dates', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{h}</th>
                 ))}</tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {loading ? Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>{Array.from({ length: 8 }).map((_, j) => <td key={j} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse" /></td>)}</tr>
+                  <tr key={i}>{Array.from({ length: 8 }).map((_, j) => <td key={j} className="px-6 py-4"><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" /></td>)}</tr>
                 )) : projects.length === 0 ? (
                   <tr><td colSpan={8} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                      <p className="text-gray-500 font-medium">No projects found</p>
+                      <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">No projects found</p>
                       {canManage && <Link href="/projects/create"><Button variant="primary" size="sm">Create first project</Button></Link>}
                     </div>
                   </td></tr>
                 ) : projects.map(p => {
                   const pct = Math.min(100, Number(p.progress_percentage) || 0);
                   return (
-                    <tr key={p.id} className="hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => router.push(`/projects/${p.id}`)}>
+                    <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors" onClick={() => router.push(`/projects/${p.id}`)}>
                       <td className="px-6 py-4">
-                        <p className="font-medium text-gray-900 hover:text-blue-600">{p.project_name}</p>
-                        {p.description && <p className="text-xs text-gray-400 mt-0.5 max-w-[200px] truncate">{p.description}</p>}
+                        <p className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">{p.project_name}</p>
+                        {p.description && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 max-w-[200px] truncate">{p.description}</p>}
                       </td>
-                      <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[p.status] ?? 'bg-gray-100 text-gray-700'}`}>{p.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
-                      <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[p.priority] ?? 'bg-gray-100 text-gray-600'}`}>{p.priority.replace(/\b\w/g, c => c.toUpperCase())}</span></td>
+                      <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[p.status] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'}`}>{p.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
+                      <td className="px-6 py-4"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[p.priority] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'}`}>{p.priority.replace(/\b\w/g, c => c.toUpperCase())}</span></td>
                       <td className="px-6 py-4 min-w-[120px]">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-1.5"><div className={`h-1.5 rounded-full ${pct === 100 ? 'bg-green-500' : 'bg-blue-500'}`} style={{ width: `${pct}%` }} /></div>
-                          <span className="text-xs text-gray-500 w-8 text-right">{pct}%</span>
+                          <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"><div className={`h-1.5 rounded-full ${pct === 100 ? 'bg-green-500' : 'bg-blue-500'}`} style={{ width: `${pct}%` }} /></div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 w-8 text-right">{pct}%</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{p.manager ? `${p.manager.first_name} ${p.manager.last_name}` : <span className="text-gray-400">—</span>}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{p.member_count}</td>
-                      <td className="px-6 py-4 text-xs text-gray-500"><div>{p.start_date ? new Date(p.start_date).toLocaleDateString() : '—'}</div><div>{p.end_date ? new Date(p.end_date).toLocaleDateString() : '—'}</div></td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{p.manager ? `${p.manager.first_name} ${p.manager.last_name}` : <span className="text-gray-400 dark:text-gray-500">—</span>}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{p.member_count}</td>
+                      <td className="px-6 py-4 text-xs text-gray-500 dark:text-gray-400"><div>{p.start_date ? new Date(p.start_date).toLocaleDateString() : '—'}</div><div>{p.end_date ? new Date(p.end_date).toLocaleDateString() : '—'}</div></td>
                       <td className="px-6 py-4" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center gap-2">
-                          <Link href={`/projects/${p.id}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50">View</Link>
+                          <Link href={`/projects/${p.id}`} className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium px-2 py-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/30">View</Link>
                           {canManage && <>
-                            <Link href={`/projects/${p.id}/edit`} className="text-xs text-gray-600 hover:text-gray-800 font-medium px-2 py-1 rounded hover:bg-gray-100">Edit</Link>
-                            <button onClick={() => handleDelete(p.id, p.project_name)} disabled={deleting === p.id} className="text-xs text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50 disabled:opacity-50">{deleting === p.id ? '…' : 'Delete'}</button>
+                            <Link href={`/projects/${p.id}/edit`} className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">Edit</Link>
+                            <button onClick={() => handleDelete(p.id, p.project_name)} disabled={deleting === p.id} className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50">{deleting === p.id ? '…' : 'Delete'}</button>
                           </>}
                         </div>
                       </td>
@@ -141,14 +146,14 @@ export default function ProjectsPage() {
             </table>
           </div>
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <p className="text-sm text-gray-500">{((page - 1) * PAGE) + 1}–{Math.min(page * PAGE, total)} of {total}</p>
+            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">{((page - 1) * PAGE) + 1}–{Math.min(page * PAGE, total)} of {total}</p>
               <div className="flex gap-2">
-                <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Previous</button>
+                <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Previous</button>
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1).map(pg => (
-                  <button key={pg} onClick={() => setPage(pg)} className={`px-3 py-1.5 text-sm border rounded-lg ${pg === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 hover:bg-gray-50'}`}>{pg}</button>
+                  <button key={pg} onClick={() => setPage(pg)} className={`px-3 py-1.5 text-sm border rounded-lg ${pg === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'}`}>{pg}</button>
                 ))}
-                <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Next</button>
+                <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages} className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Next</button>
               </div>
             </div>
           )}

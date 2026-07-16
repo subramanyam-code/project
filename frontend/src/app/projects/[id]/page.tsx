@@ -10,12 +10,17 @@ import { useRbac } from '@/hooks/use-rbac';
 import type { ProjectDetail, UserListItem } from '@/types';
 
 const STATUS_COLORS: Record<string, string> = {
-  not_started: 'bg-gray-100 text-gray-700', in_progress: 'bg-blue-100 text-blue-700',
-  on_hold: 'bg-yellow-100 text-yellow-700', completed: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700',
+  not_started: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
+  in_progress: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  on_hold: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300',
+  completed: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+  cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
 };
 const PRIORITY_COLORS: Record<string, string> = {
-  low: 'bg-gray-100 text-gray-600', medium: 'bg-blue-100 text-blue-600',
-  high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700',
+  low: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+  medium: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300',
+  high: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
+  critical: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
 };
 
 export default function ProjectDetailPage() {
@@ -70,9 +75,9 @@ export default function ProjectDetailPage() {
   if (loading) return (
     <ProtectedLayout>
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-gray-200 rounded w-1/3" />
-        <div className="h-4 bg-gray-100 rounded w-1/2" />
-        <div className="h-48 bg-gray-100 rounded" />
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+        <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded" />
       </div>
     </ProtectedLayout>
   );
@@ -80,7 +85,7 @@ export default function ProjectDetailPage() {
   if (error || !project) return (
     <ProtectedLayout>
       <div className="text-center py-16">
-        <p className="text-gray-500 font-medium">{error || 'Project not found'}</p>
+        <p className="text-gray-500 dark:text-gray-400 font-medium">{error || 'Project not found'}</p>
         <Link href="/projects"><Button variant="secondary" className="mt-4">Back to Projects</Button></Link>
       </div>
     </ProtectedLayout>
@@ -94,21 +99,21 @@ export default function ProjectDetailPage() {
     <ProtectedLayout>
       <div className="space-y-6 max-w-5xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/projects" className="hover:text-blue-600">Projects</Link>
+        <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <Link href="/projects" className="hover:text-blue-600 dark:hover:text-blue-400">Projects</Link>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          <span className="text-gray-900 font-medium truncate max-w-xs">{project.project_name}</span>
+          <span className="text-gray-900 dark:text-white font-medium truncate max-w-xs">{project.project_name}</span>
         </nav>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{project.project_name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{project.project_name}</h1>
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[project.status]}`}>{project.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PRIORITY_COLORS[project.priority]}`}>{project.priority.replace(/\b\w/g, c => c.toUpperCase())}</span>
             </div>
-            {project.description && <p className="text-gray-600">{project.description}</p>}
+            {project.description && <p className="text-gray-600 dark:text-gray-400">{project.description}</p>}
           </div>
           {canManage && (
             <div className="flex gap-2">
@@ -127,8 +132,8 @@ export default function ProjectDetailPage() {
             { label: 'End Date', value: project.end_date ? new Date(project.end_date).toLocaleDateString() : 'Not set', icon: '🏁' },
           ].map(s => (
             <Card key={s.label} className="p-4">
-              <p className="text-xs text-gray-500">{s.label}</p>
-              <p className="text-lg font-bold text-gray-900 mt-1">{s.value}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">{s.value}</p>
             </Card>
           ))}
         </div>
@@ -136,10 +141,10 @@ export default function ProjectDetailPage() {
         {/* Progress bar */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-gray-700">Overall Progress</p>
-            <span className="text-sm font-bold text-gray-900">{pct}%</span>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Progress</p>
+            <span className="text-sm font-bold text-gray-900 dark:text-white">{pct}%</span>
           </div>
-          <div className="bg-gray-200 rounded-full h-3">
+          <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-3">
             <div className={`h-3 rounded-full transition-all ${pct === 100 ? 'bg-green-500' : 'bg-blue-500'}`} style={{ width: `${pct}%` }} />
           </div>
         </Card>
@@ -155,9 +160,9 @@ export default function ProjectDetailPage() {
                 { label: 'Priority', value: project.priority.replace(/\b\w/g, c => c.toUpperCase()) },
                 { label: 'Created', value: new Date(project.created_at).toLocaleDateString() },
               ].map(item => (
-                <div key={item.label} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
-                  <span className="text-sm text-gray-500">{item.label}</span>
-                  <span className="text-sm font-medium text-gray-900">{item.value}</span>
+                <div key={item.label} className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{item.label}</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{item.value}</span>
                 </div>
               ))}
             </CardBody>
@@ -168,21 +173,21 @@ export default function ProjectDetailPage() {
             <CardHeader title={`Team Members (${project.member_count})`} />
             <CardBody className="space-y-3">
               {project.members.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-4">No members yet</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No members yet</p>
               ) : project.members.map(m => (
-                <div key={m.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={m.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xs font-bold">
                       {m.user?.first_name?.[0]?.toUpperCase() ?? '?'}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{m.user?.first_name} {m.user?.last_name}</p>
-                      <p className="text-xs text-gray-500">{m.role_in_project ?? 'member'}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{m.user?.first_name} {m.user?.last_name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{m.role_in_project ?? 'member'}</p>
                     </div>
                   </div>
                   {canManage && (
                     <button onClick={() => handleRemoveMember(m.user_id)} disabled={removingMember === m.user_id}
-                      className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded hover:bg-red-50 disabled:opacity-50">
+                      className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50">
                       {removingMember === m.user_id ? '…' : 'Remove'}
                     </button>
                   )}
@@ -191,7 +196,7 @@ export default function ProjectDetailPage() {
               {canManage && nonMembers.length > 0 && (
                 <div className="flex gap-2 pt-2">
                   <select value={selectedUserId} onChange={e => setSelectedUserId(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">— Add member —</option>
                     {nonMembers.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name}</option>)}
                   </select>

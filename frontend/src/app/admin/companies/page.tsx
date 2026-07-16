@@ -96,13 +96,13 @@ export default function CompaniesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-              <Link href="/admin" className="hover:text-blue-600">Admin</Link>
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
+              <Link href="/admin" className="hover:text-blue-600 dark:hover:text-blue-400">Admin</Link>
               <span>/</span>
-              <span className="text-gray-900 font-medium">Companies</span>
+              <span className="text-gray-900 dark:text-white font-medium">Companies</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Companies</h1>
-            <p className="text-sm text-gray-500">{total} company{total !== 1 ? 'ies' : 'y'} total</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Companies</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{total} company{total !== 1 ? 'ies' : 'y'} total</p>
           </div>
           <Button variant="primary" onClick={openCreate}>
             <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,12 +116,12 @@ export default function CompaniesPage() {
         <Card>
           <div className="p-4">
             <div className="relative max-w-sm">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input type="text" placeholder="Search companies…" value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         </Card>
@@ -130,55 +130,55 @@ export default function CompaniesPage() {
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <tr>
                   {['Company Name', 'Website', 'Description', 'Status', 'Created', 'Actions'].map(h => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
                     <tr key={i}>{Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse" /></td>
+                      <td key={j} className="px-6 py-4"><div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" /></td>
                     ))}</tr>
                   ))
                 ) : companies.length === 0 ? (
                   <tr><td colSpan={6} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
                       </svg>
-                      <p className="text-gray-500 font-medium">No companies found</p>
+                      <p className="text-gray-500 dark:text-gray-400 font-medium">No companies found</p>
                       <Button variant="primary" size="sm" onClick={openCreate}>Create first company</Button>
                     </div>
                   </td></tr>
                 ) : companies.map(c => (
-                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
                           {c.company_name[0].toUpperCase()}
                         </div>
-                        <span className="font-medium text-gray-900">{c.company_name}</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{c.company_name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {c.website ? <a href={c.website} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{c.website}</a> : '—'}
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                      {c.website ? <a href={c.website} target="_blank" rel="noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">{c.website}</a> : '—'}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{c.description || '—'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate">{c.description || '—'}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'}`}>
                         {c.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{new Date(c.created_at).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{new Date(c.created_at).toLocaleDateString()}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button onClick={() => openEdit(c)} className="text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50">Edit</button>
+                        <button onClick={() => openEdit(c)} className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium px-2 py-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/30">Edit</button>
                         <button onClick={() => handleDelete(c.id, c.company_name)} disabled={deleting === c.id}
-                          className="text-xs text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50 disabled:opacity-50">
+                          className="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50">
                           {deleting === c.id ? '…' : 'Delete'}
                         </button>
                       </div>
@@ -189,13 +189,13 @@ export default function CompaniesPage() {
             </table>
           </div>
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <p className="text-sm text-gray-500">Showing {((page - 1) * PAGE) + 1}–{Math.min(page * PAGE, total)} of {total}</p>
+            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Showing {((page - 1) * PAGE) + 1}–{Math.min(page * PAGE, total)} of {total}</p>
               <div className="flex gap-2">
                 <button onClick={() => setPage(p => p - 1)} disabled={page === 1}
-                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Previous</button>
+                  className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Previous</button>
                 <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages}
-                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50">Next</button>
+                  className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300">Next</button>
               </div>
             </div>
           )}
@@ -206,10 +206,10 @@ export default function CompaniesPage() {
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
-          <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 z-10">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">{modal === 'create' ? 'New Company' : 'Edit Company'}</h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
+          <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg mx-4 z-10">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{modal === 'create' ? 'New Company' : 'Edit Company'}</h2>
+              <button onClick={closeModal} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -217,26 +217,26 @@ export default function CompaniesPage() {
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4">
               {errors.general && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{errors.general}</div>
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">{errors.general}</div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Company Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company Name <span className="text-red-500">*</span></label>
                 <input value={form.company_name} onChange={e => { setForm(f => ({ ...f, company_name: e.target.value })); setErrors(er => ({ ...er, company_name: undefined })); }}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.company_name ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.company_name ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="Acme Corporation" />
-                {errors.company_name && <p className="text-xs text-red-600 mt-1">{errors.company_name}</p>}
+                {errors.company_name && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.company_name}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Website</label>
                 <input value={form.website} onChange={e => { setForm(f => ({ ...f, website: e.target.value })); setErrors(er => ({ ...er, website: undefined })); }}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.website ? 'border-red-400' : 'border-gray-300'}`}
+                  className={`w-full px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.website ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'}`}
                   placeholder="https://example.com" />
-                {errors.website && <p className="text-xs text-red-600 mt-1">{errors.website}</p>}
+                {errors.website && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.website}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder="Brief description of the company…" />
               </div>
               <div className="flex justify-end gap-3 pt-2">
