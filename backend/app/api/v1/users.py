@@ -64,6 +64,23 @@ def deactivate(user_id: uuid.UUID, db: Session = Depends(get_db), u: User = Depe
     return UserService(db).deactivate(user_id, u.id)
 
 
+@router.delete("/{user_id}", response_model=MessageResponse)
+def delete_user(user_id: uuid.UUID, db: Session = Depends(get_db), u: User = Depends(RequireCompanyAdmin)):
+    """Permanently delete a user and all their data. Only company_admin and above."""
+    from fastapi import HTTPException
+    from app.auth.rbac import Roles
+    # Prevent deleting yourself
+    if str(user_id) == str(u.id):
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+    target = UserService(db).get_or_404(user_id)
+    # Prevent deleting a super_admin unless you are super_admin
+    if target.role and target.role.role_name == Roles.SUPER_ADMIN and u.role and u.role.role_name != Roles.SUPER_ADMIN:
+        raise HTTPException(status_code=403, detail="Only a super_admin can delete another super_admin")
+    db.delete(target)
+    db.commit()
+    return MessageResponse(message=f"User {target.email} permanently deleted")
+
+
 @router.post("/{user_id}/avatar", response_model=UserResponse)
 def upload_avatar(user_id: uuid.UUID, file: UploadFile = File(...), db: Session = Depends(get_db), u: User = Depends(get_current_active_user)):
     from fastapi import HTTPException
