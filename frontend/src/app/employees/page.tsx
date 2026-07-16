@@ -70,7 +70,7 @@ export default function EmployeesPage() {
         </div>
       ),
     },
-    { key: 'employee_id', label: 'Employee ID' },
+    { key: 'job_title', label: 'Job Title', render: (user: User) => user.job_title ?? 'N/A' },
     {
       key: 'role',
       label: 'Role',
@@ -84,10 +84,9 @@ export default function EmployeesPage() {
         user.department?.department_name ?? user.department?.name ?? 'N/A',
     },
     {
-      key: 'teams',
-      label: 'Teams',
-      render: (user: User) =>
-        user.teams?.map(t => t.team_name ?? t.name).join(', ') || 'None',
+      key: 'team',
+      label: 'Team',
+      render: (user: User) => user.team_id ? user.team_id : 'None',
     },
     {
       key: 'is_active',
