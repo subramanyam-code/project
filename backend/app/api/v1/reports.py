@@ -72,16 +72,29 @@ def productivity_report(start_date: date = Query(...), end_date: date = Query(..
 
 
 @router.get("/dashboard/super-admin")
-def super_admin_dashboard(db: Session = Depends(get_db), u: User = Depends(get_current_active_user)):
+def super_admin_dashboard(db: Session = Depends(get_db), u: User = Depends(RequireManager)):
     from app.models.company import Company
+    from app.auth.rbac import Roles
     today = date.today()
+    # Super admin sees all companies; managers see only their company stats
+    if u.role and u.role.role_name == Roles.SUPER_ADMIN:
+        return {
+            "total_companies": db.execute(select(func.count(Company.id))).scalar_one(),
+            "total_employees": db.execute(select(func.count(User.id))).scalar_one(),
+            "active_users": db.execute(select(func.count(User.id)).where(User.is_active == True)).scalar_one(),
+            "total_projects": db.execute(select(func.count(Project.id))).scalar_one(),
+            "total_departments": db.execute(select(func.count(Department.id))).scalar_one(),
+            "today_submissions": db.execute(select(func.count(DailyStatus.id)).where(DailyStatus.submit_date == today)).scalar_one(),
+        }
+    # Company admin / manager sees only their company
+    cid = u.company_id
     return {
-        "total_companies": db.execute(select(func.count(Company.id))).scalar_one(),
-        "total_employees": db.execute(select(func.count(User.id))).scalar_one(),
-        "active_users": db.execute(select(func.count(User.id)).where(User.is_active == True)).scalar_one(),
-        "total_projects": db.execute(select(func.count(Project.id))).scalar_one(),
-        "total_departments": db.execute(select(func.count(Department.id))).scalar_one(),
-        "today_submissions": db.execute(select(func.count(DailyStatus.id)).where(DailyStatus.submit_date == today)).scalar_one(),
+        "total_companies": 1,
+        "total_employees": db.execute(select(func.count(User.id)).where(User.company_id == cid)).scalar_one(),
+        "active_users": db.execute(select(func.count(User.id)).where(User.company_id == cid, User.is_active == True)).scalar_one(),
+        "total_projects": db.execute(select(func.count(Project.id)).where(Project.company_id == cid)).scalar_one(),
+        "total_departments": db.execute(select(func.count(Department.id)).where(Department.company_id == cid)).scalar_one(),
+        "today_submissions": db.execute(select(func.count(DailyStatus.id)).join(User, DailyStatus.user_id == User.id).where(User.company_id == cid, DailyStatus.submit_date == today)).scalar_one(),
     }
 
 

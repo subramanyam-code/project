@@ -19,7 +19,7 @@ export default function TeamsPage() {
 
   const { data: teamsData, isLoading } = useQuery({
     queryKey: ['teams'],
-    queryFn: () => teamService.list(),
+    queryFn: () => teamService.list({}), // no department_id filter — list all teams
   });
 
   const teams = teamsData?.items ?? [];

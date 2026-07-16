@@ -8,11 +8,10 @@ export interface User {
   id: string;
   first_name: string;
   last_name: string;
-  full_name?: string;       // may be returned by backend
+  full_name?: string;
   email: string;
   phone?: string;
   job_title?: string;
-  employee_id?: string;
   profile_image?: string;
   is_active: boolean;
   is_verified: boolean;
@@ -22,7 +21,6 @@ export interface User {
   role_id?: string;
   role?: Role;
   department?: { id: string; department_name: string; name?: string };
-  teams?: Array<{ id: string; team_name: string; name?: string }>;
   last_login?: string;
   created_at: string;
 }
@@ -183,7 +181,6 @@ export interface ManagerDashboard {
   today_submitted: number;
   blocked_tasks: number;
   completed_today: number;
-  pending_today: number;
 }
 
 export interface EmployeeDashboard {

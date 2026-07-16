@@ -22,15 +22,18 @@ class TeamRepo(BaseRepository[Team]):
     def get_with_members(self, tid):
         return self.db.execute(select(Team).options(joinedload(Team.team_lead), joinedload(Team.members)).where(Team.id == tid)).scalar_one_or_none()
     def list_by_dept(self, dept_id, search, skip, limit):
-        q = select(Team).where(Team.department_id == dept_id)
-        if search: q = q.where(Team.team_name.ilike(f"%{search}%"))
+        q = select(Team).options(joinedload(Team.team_lead), joinedload(Team.department))
+        if dept_id:
+            q = q.where(Team.department_id == dept_id)
+        if search:
+            q = q.where(Team.team_name.ilike(f"%{search}%"))
         total = self.db.execute(select(func.count()).select_from(q.subquery())).scalar_one()
         items = self.db.execute(q.offset(skip).limit(limit)).scalars().all()
         return list(items), total
 
 
 @router.get("", response_model=PaginatedResponse[TeamResponse])
-def list_teams(department_id: uuid.UUID = Query(...), search: Optional[str] = None,
+def list_teams(department_id: Optional[uuid.UUID] = Query(None), search: Optional[str] = None,
                pagination: PaginationParams = Depends(), db: Session = Depends(get_db), u: User = Depends(RequireTeamLead)):
     items, total = TeamRepo(db).list_by_dept(department_id, search, pagination.skip, pagination.limit)
     return paginate([TeamResponse.model_validate(t) for t in items], total, pagination)

@@ -132,10 +132,10 @@ export const statusService = {
 };
 
 export const reportService = {
-  daily: (p: P) => api.get("/reports/daily", { params: p }).then(r => r.data),
-  weekly: (p: P) => api.get("/reports/weekly", { params: p }).then(r => r.data),
-  monthly: (p: P) => api.get("/reports/monthly", { params: p }).then(r => r.data),
-  custom: (p: P) => api.get("/reports/custom", { params: p }).then(r => r.data),
+  daily: (p: P) => api.get("/reports/daily", { params: p, responseType: p.format && p.format !== 'json' ? 'blob' : 'json' }).then(r => r.data),
+  weekly: (p: P) => api.get("/reports/weekly", { params: p, responseType: p.format && p.format !== 'json' ? 'blob' : 'json' }).then(r => r.data),
+  monthly: (p: P) => api.get("/reports/monthly", { params: p, responseType: p.format && p.format !== 'json' ? 'blob' : 'json' }).then(r => r.data),
+  custom: (p: P) => api.get("/reports/custom", { params: p, responseType: p.format && p.format !== 'json' ? 'blob' : 'json' }).then(r => r.data),
   productivity: (p: P) => api.get("/reports/productivity", { params: p }).then(r => r.data),
   dashboardSuperAdmin: () =>
     api.get<SuperAdminDashboard>("/reports/dashboard/super-admin").then(r => r.data),
