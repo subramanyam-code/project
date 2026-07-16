@@ -21,7 +21,7 @@ export function UserModal({ user, onClose }: UserModalProps) {
     last_name: '',
     email: '',
     phone: '',
-    employee_id: '',
+    job_title: '',
     password: '',
     department_id: '',
     company_id: '',
@@ -57,7 +57,7 @@ export function UserModal({ user, onClose }: UserModalProps) {
         last_name: user.last_name ?? nameParts.slice(1).join(' ') ?? '',
         email: user.email,
         phone: user.phone ?? '',
-        employee_id: user.employee_id ?? '',
+        job_title: user.job_title ?? '',
         password: '',
         department_id: user.department_id ?? '',
         company_id: user.company_id ?? '',
@@ -133,9 +133,9 @@ export function UserModal({ user, onClose }: UserModalProps) {
           required
         />
         <Input
-          label="Employee ID"
-          value={formData.employee_id}
-          onChange={(e) => setFormData({ ...formData, employee_id: e.target.value })}
+          label="Job Title"
+          value={formData.job_title}
+          onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
         />
         <Input
           label="Phone"
