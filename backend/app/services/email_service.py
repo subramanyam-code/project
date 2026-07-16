@@ -29,9 +29,21 @@ class EmailService:
             return False
 
     def send_password_reset_email(self, email: str, token: str) -> bool:
-        url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
+        url = f"{settings.FRONTEND_URL}/auth/reset-password?token={token}"
         return self._send(email, f"[{settings.APP_NAME}] Password Reset",
-            f"<h2>Password Reset</h2><p>Click <a href='{url}'>here</a> to reset your password (expires in {settings.PASSWORD_RESET_TOKEN_EXPIRE_HOURS}h).</p>")
+            f"""
+            <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px">
+              <h2 style="color:#2563eb">Password Reset Request</h2>
+              <p>You requested a password reset for your <b>{settings.APP_NAME}</b> account.</p>
+              <p>Click the button below to reset your password. This link expires in <b>{settings.PASSWORD_RESET_TOKEN_EXPIRE_HOURS} hours</b>.</p>
+              <a href="{url}" style="display:inline-block;background:#2563eb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;margin:16px 0">
+                Reset Password
+              </a>
+              <p style="color:#6b7280;font-size:13px">If you did not request this, ignore this email. Your password will not change.</p>
+              <p style="color:#6b7280;font-size:13px">Or copy this link: {url}</p>
+            </div>
+            """
+        )
 
     def send_welcome_email(self, email: str, first_name: str, temp_password: str) -> bool:
         return self._send(email, f"Welcome to {settings.APP_NAME}",
